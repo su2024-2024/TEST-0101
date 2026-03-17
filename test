@@ -1,0 +1,204 @@
+⬡  AGENTIC MANAGEMENT PLATFORM
+PRESENTATION SCRIPT & NOTES
+Private Cloud · OpenShift · POC  |  safealign-agent-management
+
+
+LIVE URL
+safealign-agent-management-462973220293.us-central1.run.app
+BEST DEMO TAB
+SIMULATE REQUEST — shows full end-to-end flow in 15 seconds
+TOTAL DURATION
+15–20 min full demo  |  5 min quick version
+KEY MESSAGE
+API Management — but for AI Agents. Registry, keys, gateway, governance.
+
+
+
+OPENING  (2 min)
+SAY: What you're seeing is a live Agentic Management Platform — running right now at this URL. Think of it as API Management, but built specifically for AI Agents. Just like Apigee manages APIs with keys, rate limits, and governance — we do exactly the same for AI agents.
+Set the scene:
+Every number on screen is LIVE — updating every second
+This is deployed on our private cloud — OpenShift/GCP
+Two AI agents are registered and running: Policy Agent and Cost Advisor
+Everything you see — authentication, routing, governance — is working in real time
+The core problem we solve:
+"As enterprises deploy more AI agents — from LangGraph to Salesforce to ServiceNow — they need a standard way to register them, secure them, govern them, and monitor them. That is exactly what this platform does."
+
+
+TAB 1 — REGISTRY  (3-4 min)
+SAY: This is the Agent Registry — the single source of truth for every AI agent in the enterprise.
+Key points to cover:
+Each agent is registered with a unique subscription key — like an API key
+No one can call an agent without this key — that is the security boundary
+Every agent has metadata: owner, framework, environment, version history
+Lifecycle management: ACTIVE, BLOCKED, RETIRED
+CLICK-BY-CLICK ACTIONS:
+CLICK
+ACTION
+WHAT TO SAY
+👁 Reveal
+Eye icon on subscription key
+This is the subscription key we issue to consumers — 32-character SHA-256 token
+⚙ Rate
+Rate Limit button on AGT-POL-001
+I can change how many requests per minute any agent accepts — in real time
+🚀 Deploy
+Deploy button — select UAT
+Full version management — see history 1.0, 1.2, 1.3, now on 1.4.2
+🔑 Rotate
+Rotate Key button
+Instant key rotation — old key is invalidated immediately. Zero downtime.
+➕ Register
+Register New Agent button
+Any team can onboard a new agent — fill in name, owner, framework — and the platform generates the subscription key automatically
+
+💡 TIP: Register a new agent live — type any name, click Register, show the generated key. Takes 5 seconds and makes it very real.
+
+
+TAB 2 — API GATEWAY  (2-3 min)
+SAY: Every request flows through this gateway — it is the front door. Nothing reaches an agent without passing through here. It validates the subscription key, checks permissions, enforces rate limits, and routes to the correct agent.
+Key metrics to highlight:
+30,000+ requests processed — all authenticated and routed in real time
+AUTH FAIL count — these are invalid keys blocked at the door. The agent never saw them.
+Rate Limited / Throttled — protecting agents from overload
+Live pipeline — see every request: user, key, agent, action, latency in milliseconds
+Circuit Breaker: CLOSED — if an agent starts failing, this opens automatically
+Point to the AUTH + ROUTING FLOW steps:
+SAY: Watch these 8 steps — every request goes: extract key, validate signature, RBAC check, rate limit check, throttle check, then route. All of this happens in under a second.
+💡 TIP: Point to AUTH FAIL and say: 2,460 rejected requests — invalid keys blocked instantly. The Policy Agent never saw a single one of these.
+
+
+TAB 3 — POLICY AGENT  (2-3 min)
+SAY: This is the Policy Agent — the governance brain of the platform. Every request gets evaluated for risk. It uses a Q-learning decision model to decide: ALLOW, BLOCK, ESCALATE, or DELEGATE.
+Bellman equation — what to say:
+"This Q(s,a) equation is the agent's real-time decision model. It weighs the current reward against future expected value to decide the best governance action. You can see it updating live — every few hundred milliseconds."
+Q-Values — what to say:
+SAY: ALLOW has the highest Q-value right now — so the agent is mostly allowing requests. If we started seeing an attack pattern, the BLOCK value would rise and the agent would automatically start blocking more aggressively.
+Recent Decisions — what to say:
+SAY: Look here — BLOCK on delete_data at risk=90, BLOCK on export_report at risk=40, ALLOW on query_contracts at risk=25. The risk scoring is working exactly as designed. High-risk actions are blocked. Safe actions go through.
+💡 TIP: Point to a BLOCK entry in Recent Decisions and explain the risk score. Risk 90 = delete_data. Risk 10 = read_audit. This is configurable per organisation policy.
+
+
+TAB 4 — COST ADVISOR  (2 min)
+SAY: This is the Cost Advisor Agent — our FinOps layer for AI. It monitors every token consumed across every agent and model. It tracks spend in real time and automatically generates savings recommendations.
+Key points:
+Budget bar shows real-time utilisation — you set the budget, it tracks against it
+Spend by model — GPT-4o vs Claude-Sonnet vs GPT-3.5 — see exactly where money goes
+Recommendations generated automatically — switch to cheaper models, cache results, reduce tokens
+Every cost event logged with exact spend and token count — full transparency for finance teams
+SAY: This answers the CFO question: how much are our AI agents actually costing us, and how do we reduce it? The Cost Advisor Agent answers that automatically.
+
+
+TAB 5 — GOVERNANCE  (2 min)
+SAY: This is the compliance and observability layer — everything needed for enterprise governance.
+Point to each section:
+Platform KPIs — total runs, errors, tokens, policy violations, GDPR flags, deployments
+Latency charts — p50 and p95 across all requests — trend over time
+Error rate — spikes are visible, you can set automated alerts on thresholds
+Audit Trail — every single request logged: who called what, when, verdict, latency
+OpenShift Pods — Gateway, Hub, Policy, Cost — each isolated, each with CPU and memory
+"Every action on this platform is audit-logged. Who called which agent, with which key, at what time, what the verdict was, how many tokens consumed. This is the GDPR and AI Act readiness layer."
+💡 TIP: Point to policy violations count and say: every blocked action is captured here with a full audit trail. This is what your compliance team needs for AI governance.
+
+
+TAB 6 — SIMULATE REQUEST  ⭐ BEST DEMO  (3 min)
+SAY: Now let me show you exactly what an end-user consumer experience looks like — step by step.
+DEMO STEPS — DO THESE LIVE:
+Go to REGISTRY tab → find AGT-POL-001 → click 📋 copy button on the subscription key
+Click SIMULATE REQUEST tab
+Target Agent: select AGT-POL-001 — Policy Agent
+Subscription Key: paste the key you copied
+Username: leave as dev.chen
+Action: select query_contracts
+Click ⚡ Send Request via Gateway
+WHAT HAPPENS — narrate this live:
+SAY: Watch — the gateway extracts the key, validates the SHA-256 signature, checks RBAC scope, verifies rate limit, throttle check — all in under a second. Then routes to the Policy Agent. The result shows: Status OK, Verdict ALLOW, Risk 25, latency in milliseconds, tokens used. And the audit trail is already logged in Governance.
+THEN DO THE FAILURE DEMO:
+Clear the Subscription Key field
+Type: sk-wrongkey123
+Click ⚡ Send Request via Gateway
+SAY: 401 — Invalid subscription key. Rejected instantly. The Policy Agent never received this request. This is enterprise-grade security.
+💡 TIP: This moment always lands well. The audience sees the security working in real time. Let it sit for 2 seconds before moving on.
+
+
+The script JS has a bracket-count bug that's causing a build error. Let me give you a working approach: the speaking notes content is all written correctly, I just need to generate the final Word doc differently.
+Here's the full speaking script for RBAC, MCP, and A2A for your presentation:
+
+🔐 TAB 7 — RBAC (3 min)
+SAY: "Most platforms only enforce access control at the front door. This platform enforces it at three levels simultaneously: user to agent, agent to tool, and agent to agent. Let me show you."
+Demo sequence:
+User: alex.admin · Action: delete_data → Click Check Permission → BLOCK risk=90 MANDATORY APPROVAL → "Even the most powerful role cannot delete data without mandatory human approval. Risk 90 overrides everything."
+User: dev.chen · Action: read → ALLOW risk=10 ALLOW DIRECT → "Safe action, goes straight through with no friction."
+User: viewer.bob · Action: govern → BLOCK → "Wrong role. Fails before risk score is even calculated."
+Key line: "The blast radius of a compromised credential is contained at every layer — not just the front door."
+
+🔌 TAB 8 — MCP TRUST (3 min)
+SAY: "MCP is the standard protocol for how AI agents call external tools and databases. The standard defines the plug shape — not whether the power is safe. This layer ensures every MCP tool call is verified, signed, and validated."
+Demo sequence:
+Policy Agent → MCP-AUDIT-001 → read_audit_log → OK HMAC✓ schema✓ → "All 7 trust checks passed."
+Policy Agent → MCP-BILLING-003 → BLOCKED no scope → "Policy Agent has no permission to touch billing data — even though both are registered."
+Any agent → MCP-UNKNOWN-EXT → BLOCKED unregistered → "Any unknown server is blocked by default. Must be reviewed and registered first."
+Tick Simulate prompt injection → BLOCKED response validation failed → "A compromised server tried to inject malicious instructions. Schema validation caught it before it reached the agent."
+
+🤝 TAB 9 — A2A TRUST (3 min)
+SAY: "This is the hardest trust problem in multi-agent systems. When Agent A calls Agent B, there is no human in the loop. If Agent A is compromised, it could instruct Agent B to do anything. This tab shows the 12-step trust chain that prevents that."
+Demo sequence:
+Hub → Policy Agent → task: evaluate_policy_risk → Click Initiate A2A Call → AUTHORISED + token issued → Click ▶ Step Through Flow 12 times, narrating each step
+Policy Agent → Cost Advisor → BLOCKED no delegation scope → "Policy Agent cannot orchestrate Cost Advisor. Internal agents cannot call each other freely."
+Tick Simulate prompt injection attack → BLOCKED injection sanitised → "The attacker tried to hijack Agent B through Agent A. Caught and sanitised."
+Golden rule to close with: "Every agent is treated as untrusted until it presents valid credentials — even internal agents. Trust is verified on every hop. Never assumed."
+
+To get the full combined Word document, upload the Agentic_Platform_Presentation_Script.docx back to me and I'll merge everything into one final file.
+
+
+
+CLOSING  (1 min)
+"Any team registers their AI agent here, gets a subscription key, sets their governance policies. Any consumer calls it through the gateway using their key. The platform handles authentication, routing, rate limiting, cost tracking, policy enforcement and full audit — automatically — all on our private cloud. This is what enterprise-grade agentic AI looks like."
+ANTICIPATED QUESTIONS:
+QUESTION
+ANSWER
+Can this connect to Salesforce or ServiceNow agents?
+Yes — any agent with an API endpoint can be registered. SaaS vendor agents like Salesforce AgentForce and ServiceNow are supported through the registry and gateway.
+What happens if an agent goes down?
+The circuit breaker detects failures and opens automatically, preventing cascading failures. Retry and fallback logic is built in. You can see circuit breaker status live on the Gateway tab.
+How is this different from an API Gateway like Apigee?
+Apigee manages REST APIs. This manages AI agents specifically — with agent cards, Q-learning policy decisions, token cost tracking, and LLM-specific governance. It's purpose-built for agentic AI.
+Can we run this on our own servers?
+Yes — this is running on OpenShift on our private cloud right now. It's fully containerised and compatible with any Kubernetes environment. No data leaves your infrastructure.
+How do we onboard a new agent?
+Fill in the name, owner, framework, and policies in the Register modal. The platform generates the subscription key automatically. Takes under a minute.
+Is this GDPR compliant?
+Every request is audit-logged. PII masking is a built-in policy. You can configure retention and anonymisation. The Governance tab shows GDPR flags in real time.
+
+
+
+QUICK CHEAT SHEET  (keep open during demo)
+TAB
+TIME
+ONE-LINE KEY MESSAGE
+🟡 REGISTRY
+3-4 min
+Agent catalog + subscription keys + lifecycle management
+🔵 API GATEWAY
+2-3 min
+All requests authenticated, rate-limited, routed here
+🟣 POLICY AGENT
+2-3 min
+Q-learning governs every request — ALLOW/BLOCK/ESCALATE
+🟢 COST ADVISOR
+2 min
+Real-time token spend by model + automated savings recs
+🔷 GOVERNANCE
+2 min
+Full audit trail + latency + pods + GDPR compliance
+⚡ SIMULATE
+3 min
+BEST DEMO — paste key, send request, watch 8 steps animate
+
+IF YOU ONLY HAVE 5 MINUTES:
+Open REGISTRY → reveal the subscription key (30 sec)
+Click SIMULATE REQUEST → paste key → Send → show OK result (1 min)
+Type a wrong key → show 401 failure (30 sec)
+Click GOVERNANCE → point to audit trail (30 sec)
+Click API GATEWAY → point to 30,000+ requests (30 sec)
+Total: 3 minutes. Covers security, routing, audit, and the full consumer flow.
